@@ -1,0 +1,21 @@
+First pass is just going to spit out a name from a json file.
+Then we can get some logic to piece some names together.
+Also very simple page design.
+Going to try using PUG for templating
+It's simple, this will work.
+
+I have the pug templating in there.
+Also css is importing just fine
+Now I need a button to generate a new name(refresh the page)
+Then look into hosting on Heroku
+Then databases.
+Maybe some better styling after that but I don't care too much.
+And that should be good
+
+
+apparently postgres interfaces with node with the pg package
+and is available in a "Free tier" of heroku
+That should be what I do.
+First how do I host on heroku. That comes first.
+
+first I need to also get this thing on git
