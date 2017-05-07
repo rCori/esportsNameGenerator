@@ -40,6 +40,6 @@ myAppServer.get('/esports',function(req,res){
   }
 })
 
-var server = myAppServer.listen(8081, function(){
+var server = myAppServer.listen(process.enc.PORT || 8081, function(){
 
 });
