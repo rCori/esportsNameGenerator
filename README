@@ -1,11 +1,11 @@
-A name generator to tech myself NodeJS and deployment on Heroku.
+Dumb project for goofs
+It generates "ESports-like" names.
+Did this to tech myself NodeJS and deployment on Heroku.
 It's live at:
 
 https://warm-springs-77081.herokuapp.com/esports
 
 Goals for the future:
 Hooking up to a database(It's using a JSON file I have stuffed in there)
-Get a real web domatain
+Get a real web domain
 Better styling
-
-Simple project for goofs
