@@ -90,7 +90,7 @@ MongoClient.connect(mongoUrl,function(err,db){
 
 var compiledEsportsTemplate = pug.compileFile(__dirname + '/resources/pugfiles/index.pug');
 
-myAppServer.get('/esports',function(req,res){
+myAppServer.get('/',function(req,res){
   //If the name array is array then send one
   if(composedNameArrayRead){
     var returnName = getRandomComposedName();
