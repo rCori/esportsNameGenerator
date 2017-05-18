@@ -1,11 +1,13 @@
 Dumb project for goofs
 It generates "ESports-like" names.
 Did this to tech myself NodeJS and deployment on Heroku.
+I also got into NoSQL using MongoDB. The name data is all stored in a mLab MongoDB database.
+Everything is being used at the free tier, so site and db access will be finicky.
 It's live at:
 
-https://warm-springs-77081.herokuapp.com/esports
+www.esportszone.zone
 
 Goals for the future:
-Hooking up to a database(It's using a JSON file I have stuffed in there)
-Get a real web domain
 Better styling
+More effiecient use of database. It loads it all at once right now.
+Massive code cleanup
