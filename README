@@ -6,8 +6,3 @@ Everything is being used at the free tier, so site and db access will be finicky
 It's live at:
 
 www.esportszone.zone
-
-Goals for the future:
-Better styling
-More effiecient use of database. It loads it all at once right now.
-Massive code cleanup

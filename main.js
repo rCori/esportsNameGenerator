@@ -17,90 +17,59 @@ var composedNameArrayRead = false;
 var myAppServer = express();
 var nameArrayRead = false;
 
-function jsonNameRead(err,data){
-  if(err) throw err;1
-  var jsonNameArrayObj = JSON.parse(data);
-  nameArray = jsonNameArrayObj.nameArray;
-  nameArrayRead = true;
-}
-
-function mongodbNameRead(err,db){
-  var firstNameCollection = db.collection('firstNames');
-  firstNameCollection.find({}).toArray(function(err,docs){
-    console.log("Found these first name records:");
-    console.log(docs);
-    for(var i = 0; i<docs.length;i++){
-      firstNameArray.push(docs[i]['firstName']);
-    }
-  });
-  var lastNameCollection = db.collection('lastNames');
-  lastNameCollection.find({}).toArray(function(err,docs){
-    console.log("Found these last name records:");
-    console.log(docs);
-    for(var i = 0; i<docs.length;i++){
-      lastNameArray.push(docs[i]['lastName']);
-    }
-  });
-  var connectorCollection = db.collection('connectors');
-  connectorCollection.find({}).toArray(function(err,docs){
-    console.log("Found these connector records:");
-    console.log(docs);
-    for(var i = 0; i<docs.length;i++){
-      connectorArray.push(docs[i]['connector']);
-    }
-  });
-  composedNameArrayRead = true;
-}
-
-function jsonNameComposedRead(err,data){
-  if(err) throw err;
-  var jsonComposedNameArrayObj = JSON.parse(data);
-  firstNameArray = jsonComposedNameArrayObj.firstNames;
-  lastNameArray = jsonComposedNameArrayObj.lastNames;
-  connectorArray = jsonComposedNameArrayObj.connectors;
-  composedNameArrayRead = true;
-}
-
-//Get a random name from the name array
-function getRandomName(){
-  var selection = Math.floor(Math.random() *  nameArray.length);
-  return nameArray[selection];
-}
-
-function getRandomComposedName(){
-  var firstName = firstNameArray[Math.floor(Math.random() *  firstNameArray.length)];
-  var lastName = lastNameArray[Math.floor(Math.random() *  lastNameArray.length)];
-  var connector = connectorArray[Math.floor(Math.random() *  connectorArray.length)];
-  var allCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  var sponser = "";
-  for(var i = 0; i < 3; i++){
-    sponser += allCharacters.charAt(Math.floor(Math.random() * allCharacters.length));
-  }
-  return "["+sponser+"]"+firstName+connector+lastName;
-}
-
-//fs.readFile('resources/json/fullNames.json','utf8',jsonNameRead);
-//fs.readFile('resources/json/nameParts.json','utf8',jsonNameComposedRead);
-
-MongoClient.connect(mongoUrl,function(err,db){
-  console.log("connected correctly to server");
-  mongodbNameRead(err,db);
-  db.close();
-});
-
 var compiledEsportsTemplate = pug.compileFile(__dirname + '/resources/pugfiles/index.pug');
 
 myAppServer.get('/',function(req,res){
   //If the name array is array then send one
-  if(composedNameArrayRead){
-    var returnName = getRandomComposedName();
-    var esportsTemplateOutput = compiledEsportsTemplate({name:returnName});
-    res.send(esportsTemplateOutput);
-  }
-  //If not just a debug message
-  else {
-    res.send("NOT READY");
-  }
+  var firstName = "";
+  var lastName = "";
+  var connector = "";
+  var esportsTemplateOutput = "";
+  MongoClient.connect(mongoUrl,function(err,db){
+    if(err){
+      console.log(err);
+    }
+    var firstNameCollection = db.collection('firstNames');
+    firstNameCollection.count(function(err,count){
+
+      //console.log("firstName collection count: " + count.toString());
+      var firstNameCollectionIndex = Math.floor(Math.random() * count);
+      firstNameCollection.find({"index":firstNameCollectionIndex.toString()}).toArray(function(err,docs){
+        firstName = docs[0]['firstName'];
+
+        var lastNameCollection = db.collection('lastNames');
+        lastNameCollection.count(function(err,count){
+
+          //console.log("lastName collection count: " + count.toString());
+          var lastNameCollectionIndex = Math.floor(Math.random() * count);
+          lastNameCollection.find({"index":lastNameCollectionIndex.toString()}).toArray(function(err,docs){
+            lastName = docs[0]['lastName'];
+
+            var connectorCollection = db.collection('connectors');
+            connectorCollection.count(function(err,count){
+              //console.log("connector collection count: " + count.toString());
+              var connectorCollectionIndex = Math.floor(Math.random() * count);
+              connectorCollection.find({"index":connectorCollectionIndex.toString()}).toArray(function(err,docs){
+                connector = docs[0]['connector'];
+
+                var allCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                var sponser = "";
+                for(var i = 0; i < 3; i++){
+                  sponser += allCharacters.charAt(Math.floor(Math.random() * allCharacters.length));
+                }
+                var returnName = "["+sponser+"]"+firstName+connector+lastName;
+                //return "["+sponser+"]"+firstName+connector+lastName;
+                esportsTemplateOutput = compiledEsportsTemplate({name:returnName});
+
+                res.send(esportsTemplateOutput);
+                db.close();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
 })
 
 var server = myAppServer.listen(process.env.PORT || 8081, function(){
